@@ -117,14 +117,27 @@ M models*, and every call is a slow, metered network round-trip.
 
 ---
 
-## Type-safe frontend integration
+## Frontend (`web/`)
 
-FastAPI generates an OpenAPI 3 schema at `/openapi.json` from the Pydantic
-models. A frontend generates a typed client from it — e.g.
-`openapi-typescript` for types or `openapi-generator` for a full client — so the
-contract between frontend and backend is checked at compile time and any
-breaking API change surfaces as a type error, not a runtime 500. Error responses
-use a consistent shape so the client can pattern-match on them.
+A Next.js app lives in `web/` — same repo, so the type-safe contract is literal:
+
+- **Stack:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS, Radix UI.
+- **Generated client.** FastAPI emits an OpenAPI 3 schema from the Pydantic
+  models; `openapi-typescript` turns it into TS types and `openapi-fetch` gives a
+  fully typed client over them. A breaking API change surfaces as a compile
+  error, not a runtime 500. The home page (a Client Component) streams results
+  live from the SSE endpoint; the history page (a Server Component) fetches
+  through the same typed client server-side.
+
+```bash
+# 1. backend running on :8000 (see Quickstart)
+# 2. regenerate the client whenever the API changes:
+python scripts/export_openapi.py        # -> openapi.json
+cd web && npm install && npm run gen:api # -> src/lib/api/schema.ts
+# 3. run it:
+cp .env.local.example .env.local         # points at http://localhost:8000
+npm run dev                              # http://localhost:3000
+```
 
 ---
 
@@ -141,7 +154,8 @@ use a consistent shape so the client can pattern-match on them.
 
 ## Stack
 
-Python 3.11 · FastAPI · Pydantic v2 · SQLModel · httpx · pytest · Docker
+**Backend:** Python 3.11 · FastAPI · Pydantic v2 · SQLModel · httpx · pytest · Docker
+**Frontend (`web/`):** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS · Radix UI · openapi-fetch
 
 ## Roadmap
 
