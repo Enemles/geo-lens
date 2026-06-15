@@ -5,8 +5,14 @@ Pydantic foundation the rest of the app is built on.
 """
 
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Anchor the default SQLite file to the repo root, so it's the same database no
+# matter which directory the server is launched from (a relative path would
+# silently create a different db per working directory).
+_DEFAULT_SQLITE = Path(__file__).resolve().parent.parent / "geo_lens.db"
 
 
 class Settings(BaseSettings):
@@ -36,7 +42,7 @@ class Settings(BaseSettings):
     cache_ttl_seconds: int = 3600
 
     # SQLite by default (zero setup); swap to Postgres in prod with one env var.
-    database_url: str = "sqlite:///./geo_lens.db"
+    database_url: str = f"sqlite:///{_DEFAULT_SQLITE}"
 
     # Allowed origins for the browser frontend (Next.js dev server by default).
     cors_origins: list[str] = ["http://localhost:3000"]
