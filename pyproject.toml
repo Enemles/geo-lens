@@ -1,0 +1,9 @@
+[project]
+name = "geo-lens"
+version = "0.1.0"
+description = "Measure how visible a brand is to AI assistants (Generative Engine Optimization)."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
